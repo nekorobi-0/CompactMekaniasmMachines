@@ -1,33 +1,22 @@
 package com.CompactMekanismMachines.client.gui;
 
 import com.CompactMekanismMachines.common.tile.TileEntityCompactFissionReactor;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mekanism.client.gui.GuiConfigurableTile;
-import mekanism.client.gui.GuiMekanismTile;
-import mekanism.client.gui.element.bar.GuiVerticalPowerBar;
 import mekanism.client.gui.element.gauge.GaugeType;
 import mekanism.client.gui.element.gauge.GuiFluidGauge;
 import mekanism.client.gui.element.gauge.GuiGasGauge;
-import mekanism.client.gui.element.gauge.GuiNumberGauge;
-import mekanism.client.gui.element.tab.GuiEnergyTab;
 import mekanism.client.gui.element.tab.GuiHeatTab;
-import mekanism.client.render.MekanismRenderer;
 import mekanism.common.MekanismLang;
 import mekanism.common.inventory.container.tile.MekanismTileContainer;
 import mekanism.common.util.MekanismUtils;
 import mekanism.common.util.UnitDisplayUtils;
-import mekanism.common.util.text.EnergyDisplay;
 import mekanism.generators.common.GeneratorsLang;
-import mekanism.generators.common.tile.TileEntityGasGenerator;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class GuiCompactFissionReactor extends GuiConfigurableTile<TileEntityCompactFissionReactor, MekanismTileContainer<TileEntityCompactFissionReactor>> {
 
@@ -52,7 +41,7 @@ public class GuiCompactFissionReactor extends GuiConfigurableTile<TileEntityComp
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull PoseStack guiGraphics, int mouseX, int mouseY) {
         renderTitleText(guiGraphics);
         drawString(guiGraphics, playerInventoryTitle, inventoryLabelX, inventoryLabelY, titleTextColor());
         Component component = GeneratorsLang.GAS_BURN_RATE.translate(tile.getUsed());

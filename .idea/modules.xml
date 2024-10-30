@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CompactMekniasmMachines.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CompactMekniasmMachines.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CompactMekniasmMachines.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CompactMekniasmMachines.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/compressed_machine.main.iml" filepath="$PROJECT_DIR$/.idea/modules/compressed_machine.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/compressed_machine.test.iml" filepath="$PROJECT_DIR$/.idea/modules/compressed_machine.test.iml" />
     </modules>

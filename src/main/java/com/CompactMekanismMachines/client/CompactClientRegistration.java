@@ -8,13 +8,13 @@ import com.CompactMekanismMachines.common.CompactMekanismMachines;
 import com.CompactMekanismMachines.common.registries.CompactContainerTypes;
 import com.CompactMekanismMachines.common.registries.CompactTileEntityTypes;
 import mekanism.client.ClientRegistrationUtil;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.RegisterEvent;
 
 @Mod.EventBusSubscriber(modid = CompactMekanismMachines.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CompactClientRegistration {
@@ -35,8 +35,7 @@ public class CompactClientRegistration {
 
     }
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void registerContainers(RegisterEvent event) {
-        event.register(Registries.MENU, helper -> {
+    public static void registerContainers(RegistryEvent.Register<MenuType<?>> event) {
             ClientRegistrationUtil.registerScreen(CompactContainerTypes.COMPACT_FISSION_REACTOR, GuiCompactFissionReactor::new);
             ClientRegistrationUtil.registerScreen(CompactContainerTypes.COMPACT_INDUSTRIAL_TURBINE, GuiCompactIndustrialTurbine::new);
 
@@ -52,7 +51,5 @@ public class CompactClientRegistration {
             ClientRegistrationUtil.registerScreen(CompactContainerTypes.WIND_GENERATOR_X32768,GuiCompressedWindGenerator_x32768::new);
             ClientRegistrationUtil.registerScreen(CompactContainerTypes.WIND_GENERATOR_X131072, GuiCompressedWindGenerator_x131072::new);
             ClientRegistrationUtil.registerScreen(CompactContainerTypes.WIND_GENERATOR_X532480, GuiCompressedWindGenerator_x532480::new);
-
-        });
     }
 }

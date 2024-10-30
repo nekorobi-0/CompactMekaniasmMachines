@@ -4,12 +4,9 @@ package com.CompactMekanismMachines.common;
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
 import com.CompactMekanismMachines.common.registries.CompactContainerTypes;
-import com.CompactMekanismMachines.common.registries.CompactCreativeTabs;
 import com.CompactMekanismMachines.common.registries.CompactTileEntityTypes;
 import com.mojang.logging.LogUtils;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -35,7 +32,6 @@ public class CompactMekanismMachines {
     // Create a Deferred Register to hold Items which will all be registered under the "examplemod" namespace
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     // Create a Deferred Register to hold CreativeModeTabs which will all be registered under the "examplemod" namespace
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
 
     public CompactMekanismMachines()
@@ -46,9 +42,7 @@ public class CompactMekanismMachines {
         modEventBus.addListener(this::commonSetup);
         CompactMekanismMachinesConfig.registerConfigs(ModLoadingContext.get());
 
-        CREATIVE_MODE_TABS.register(modEventBus);
         CompactBlocks.BLOCKS.register(modEventBus);
-        CompactCreativeTabs.CREATIVE_TABS.register(modEventBus);
         CompactContainerTypes.CONTAINER_TYPES.register(modEventBus);
         CompactTileEntityTypes.TILE_ENTITY_TYPES.register(modEventBus);
         // Register ourselves for server and other game events we are interested in
@@ -57,7 +51,6 @@ public class CompactMekanismMachines {
         // Register the item to a creative tab
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
     public static ResourceLocation rl(String path) {
         return new ResourceLocation(CompactMekanismMachines.MODID, path);
@@ -67,12 +60,6 @@ public class CompactMekanismMachines {
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
 
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
 }

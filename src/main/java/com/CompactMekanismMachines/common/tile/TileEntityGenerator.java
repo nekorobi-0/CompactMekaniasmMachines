@@ -24,6 +24,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+
 /**
  MIT License
 
@@ -35,23 +37,23 @@ public abstract class TileEntityGenerator extends TileEntityMekanism {
     /**
      * Output per tick this generator can transfer.
      */
-    private FloatingLong maxOutput;
+    public FloatingLong output;
     private BasicEnergyContainer energyContainer;
 
     /**
      * Generator -- a block that produces energy. It has a certain amount of fuel it can store as well as an output rate.
      */
-    public TileEntityGenerator(IBlockProvider blockProvider, BlockPos pos, BlockState state, @NotNull FloatingLongSupplier maxOutput) {
+    public TileEntityGenerator(IBlockProvider blockProvider, BlockPos pos, BlockState state, @Nonnull FloatingLong out) {
         super(blockProvider, pos, state);
-        updateMaxOutputRaw(maxOutput.get());
-        addCapabilityResolver(BasicCapabilityResolver.constant(Capabilities.CONFIG_CARD, this));
+        output = out;
+        addCapabilityResolver(BasicCapabilityResolver.constant(Capabilities.CONFIG_CARD_CAPABILITY, this));
     }
 
     protected RelativeSide[] getEnergySides() {
         return new RelativeSide[]{RelativeSide.FRONT};
     }
 
-    @NotNull
+    @Nonnull
     @Override
     protected IEnergyContainerHolder getInitialEnergyContainers(IContentsListener listener) {
         EnergyContainerHelper builder = EnergyContainerHelper.forSide(this::getDirection);
@@ -75,21 +77,10 @@ public abstract class TileEntityGenerator extends TileEntityMekanism {
 
     @ComputerMethod
     public FloatingLong getMaxOutput() {
-        return maxOutput;
-    }
-
-    protected void updateMaxOutputRaw(FloatingLong maxOutput) {
-        this.maxOutput = maxOutput.multiply(2);
-    }
-
-    protected ISyncableData syncableMaxOutput() {
-        return SyncableFloatingLong.create(this::getMaxOutput, value -> maxOutput = value);
+        return output;
     }
 
     public BasicEnergyContainer getEnergyContainer() {
         return energyContainer;
     }
-
-    @ComputerMethod(methodDescription = "Get the amount of energy produced by this generator in the last tick.")
-    abstract FloatingLong getProductionRate();
 }

@@ -6,7 +6,6 @@ import mekanism.api.IContentsListener;
 import mekanism.api.RelativeSide;
 import mekanism.api.chemical.attribute.ChemicalAttributeValidator;
 import mekanism.api.chemical.gas.attribute.GasAttributes;
-import mekanism.api.functions.ConstantPredicates;
 import mekanism.api.heat.HeatAPI;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.chemical.ChemicalTankBuilder;
@@ -61,14 +60,13 @@ import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
 
 import java.util.EnumSet;
 import java.util.Set;
-import java.util.function.LongSupplier;
 
 public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachine {
 
     /**
      * The tank this block is storing fuel in.
      */
-    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class, methodNames = {"getFuel", "getFuelCapacity", "getFuelNeeded", "getFuelFilledPercentage"}, docPlaceholder = "fuel tank")
+    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerChemicalTankWrapper.class, methodNames = {"getFuel", "getFuelCapacity", "getFuelNeeded", "getFuelFilledPercentage"})
     public FuelTank fuelTank;
     public CoolantGasTank coolantGasTank;
     public CoolantFluidTank coolantFluidTank;
@@ -86,9 +84,9 @@ public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachi
     private static final double INVERSE_CONDUCTION_COEFFICIENT = 10;
     private static final double waterConductivity = 0.5;
     private ConfigInfo gasConfig;
-    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getFuelItem", docPlaceholder = "fuel item slot")
+    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getFuelItem")
     GasInventorySlot fuelSlot;
-    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem", docPlaceholder = "energy item slot")
+    @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem")
     EnergyInventorySlot energySlot;
 
     public TileEntityCompactFissionReactor(BlockPos pos, BlockState state) {
@@ -187,7 +185,8 @@ public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachi
                     heatCapacitor.handleHeat(-caseCoolantHeat);
                 }
             }   else if (!coolantGasTank.isEmpty()) {
-                coolantGasTank.getStack().ifAttributePresent(CooledCoolant.class, coolantType -> {
+                CooledCoolant coolantType = coolantGasTank.getStack().get(CooledCoolant.class);
+                if (coolantType!=null){
                     double caseCoolantHeat = heat * coolantType.getConductivity();
                     lastBoilRate = clampCoolantHeated(caseCoolantHeat / coolantType.getThermalEnthalpy(), coolantGasTank.getStored());
                     if (lastBoilRate > 0) {
@@ -196,7 +195,7 @@ public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachi
                         caseCoolantHeat = lastBoilRate * coolantType.getThermalEnthalpy();
                         heatCapacitor.handleHeat(-caseCoolantHeat);
                     }
-                });
+                };
             }
             partialWaste += toUse;
             long newWaste = (long) Math.floor(partialWaste);
@@ -325,14 +324,18 @@ public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachi
 
     private class CoolantFluidTank extends VariableCapacityFluidTank {
         protected  CoolantFluidTank(@Nullable IContentsListener listener){
-            super(CompactMekanismMachinesConfig.machines.cfrCoolantFluidTankCapacity,ConstantPredicates.notExternal(), ConstantPredicates.alwaysTrueBi(),
+            super(CompactMekanismMachinesConfig.machines.cfrCoolantFluidTankCapacity,
+                    (stack, automationType) -> automationType != AutomationType.EXTERNAL,
+                    (stack, automationType) -> true,
                     fluid -> fluid.isFluidEqual(new FluidStack(Fluids.WATER,1)),listener);
         }
     }
 
     private  class HeatedCoolantTank extends VariableCapacityGasTank {
         protected HeatedCoolantTank(@Nullable IContentsListener listener){
-            super(CompactMekanismMachinesConfig.machines.cfrHeatedCoolantTankCapacity,ConstantPredicates.alwaysTrueBi(),ConstantPredicates.internalOnly(),
+            super(CompactMekanismMachinesConfig.machines.cfrHeatedCoolantTankCapacity,
+                    (stack, automationType) -> true,
+                    (stack, automationType) -> automationType == AutomationType.INTERNAL,
                     gas -> (gas.has(GasAttributes.HeatedCoolant.class)||gas.equals(MekanismGases.STEAM.get())),ChemicalAttributeValidator.ALWAYS_ALLOW,listener);
         }
     }
@@ -349,5 +352,4 @@ public class TileEntityCompactFissionReactor extends TileEntityConfigurableMachi
             super(CompactMekanismMachinesConfig.machines.cfrHeatTankCpacity.get(),() -> INVERSE_CONDUCTION_COEFFICIENT, () -> INVERSE_INSULATION_COEFFICIENT, () -> biomeAmbientTemp, null);
         }
     }
-
 }

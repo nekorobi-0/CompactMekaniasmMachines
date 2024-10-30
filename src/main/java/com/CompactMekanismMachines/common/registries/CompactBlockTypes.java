@@ -31,7 +31,7 @@ public class CompactBlockTypes {
             .withSound(GeneratorsSounds.FISSION_REACTOR)
             .withSupportedUpgrades(EnumSet.of(Upgrade.MUFFLING))
             .withComputerSupport("compactfissionreactor")
-            .replace(Attributes.ACTIVE_MELT_LIGHT)
+            .replace(Attributes.ACTIVE_LIGHT)
             .build();
 
     public static final Generator<TileEntityCompactIndustrialTurbine> COMPACT_INDUSTRIAL_TURBINE = Generator.GeneratorBuilder
@@ -43,7 +43,7 @@ public class CompactBlockTypes {
             .withSound(GeneratorsSounds.FISSION_REACTOR)
             .withSupportedUpgrades(EnumSet.of(Upgrade.MUFFLING))
             .withComputerSupport("compactindustrialturbine")
-            .replace(Attributes.ACTIVE_MELT_LIGHT)
+            .replace(Attributes.ACTIVE_LIGHT)
             .build();
 
 

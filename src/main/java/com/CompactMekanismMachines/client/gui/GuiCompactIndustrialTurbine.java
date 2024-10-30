@@ -2,9 +2,9 @@ package com.CompactMekanismMachines.client.gui;
 
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
 import com.CompactMekanismMachines.common.tile.TileEntityCompactIndustrialTurbine;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mekanism.api.text.EnumColor;
 import mekanism.client.gui.GuiConfigurableTile;
-import mekanism.client.gui.GuiMekanismTile;
 import mekanism.client.gui.element.GuiElement;
 import mekanism.client.gui.element.GuiInnerScreen;
 import mekanism.client.gui.element.bar.GuiBar;
@@ -12,7 +12,6 @@ import mekanism.client.gui.element.bar.GuiVerticalPowerBar;
 import mekanism.client.gui.element.bar.GuiVerticalRateBar;
 import mekanism.client.gui.element.button.GuiGasMode;
 import mekanism.client.gui.element.gauge.GaugeType;
-import mekanism.client.gui.element.gauge.GuiEnergyGauge;
 import mekanism.client.gui.element.gauge.GuiGasGauge;
 import mekanism.client.gui.element.tab.GuiEnergyTab;
 import mekanism.common.MekanismLang;
@@ -24,7 +23,6 @@ import mekanism.common.util.text.TextUtils;
 import mekanism.generators.common.GeneratorsLang;
 import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.turbine.TurbineValidator;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -87,22 +85,22 @@ public class GuiCompactIndustrialTurbine extends GuiConfigurableTile<TileEntityC
                     .multiply(tile.clientFlow * CompactMekanismMachinesConfig.machines.turbinevertualblades.get()));
             return List.of(MekanismLang.STORING.translate(storing), GeneratorsLang.PRODUCING_AMOUNT.translate(producing));
         }));
-        addRenderableWidget(new GuiGasMode(this, 159, 72, true, () -> tile.dumpMode, tile.getBlockPos(), 0, this::dumpModeTooltip));
+        addRenderableWidget(new GuiGasMode(this, 159, 72, true, () -> tile.dumpMode, tile.getBlockPos(), 0));
         addRenderableWidget(new GuiVerticalPowerBar(this, tile.energyContainer, 164, 15));
     }
 
     @Override
-    protected void drawForegroundText(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void drawForegroundText(@NotNull PoseStack guiGraphics, int mouseX, int mouseY) {
         renderTitleText(guiGraphics);
         drawString(guiGraphics, playerInventoryTitle, inventoryLabelX, inventoryLabelY, titleTextColor());
         super.drawForegroundText(guiGraphics, mouseX, mouseY);
     }
 
-    private void dumpModeTooltip(GuiElement element, GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void dumpModeTooltip(GuiElement element, PoseStack guiGraphics, int mouseX, int mouseY) {
         TileEntityChemicalTank.GasMode dumpMode = tile.dumpMode;
         if (dumpMode != TileEntityChemicalTank.GasMode.IDLE) {
-            GeneratorsLang firstLine = dumpMode == TileEntityChemicalTank.GasMode.DUMPING_EXCESS ? GeneratorsLang.TURBINE_DUMPING_EXCESS_STEAM : GeneratorsLang.TURBINE_DUMPING_STEAM;
-            displayTooltips(guiGraphics, mouseX, mouseY, firstLine.translate(), GeneratorsLang.TURBINE_DUMPING_STEAM_WARNING.translateColored(EnumColor.RED));
+            GeneratorsLang firstLine = dumpMode == TileEntityChemicalTank.GasMode.DUMPING_EXCESS ? GeneratorsLang.TURBINE : GeneratorsLang.TURBINE;
+            displayTooltips(guiGraphics, mouseX, mouseY, firstLine.translate(), GeneratorsLang.TURBINE.translateColored(EnumColor.RED));
         }
     }
 }

@@ -4,7 +4,6 @@ import mekanism.api.Action;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
 import mekanism.api.RelativeSide;
-import mekanism.api.functions.ConstantPredicates;
 import mekanism.api.math.FloatingLong;
 import mekanism.api.chemical.ChemicalTankBuilder;
 import mekanism.api.chemical.gas.Gas;
@@ -22,10 +21,8 @@ import mekanism.common.capabilities.holder.energy.IEnergyContainerHolder;
 import mekanism.common.capabilities.holder.fluid.FluidTankHelper;
 import mekanism.common.capabilities.holder.fluid.IFluidTankHolder;
 import mekanism.common.config.MekanismConfig;
-import mekanism.common.integration.computer.SpecialComputerMethodWrapper;
 import mekanism.common.integration.computer.annotation.ComputerMethod;
 import mekanism.common.integration.computer.annotation.SyntheticComputerMethod;
-import mekanism.common.integration.computer.annotation.WrappingComputerMethod;
 import mekanism.common.inventory.container.sync.dynamic.ContainerSync;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.registries.MekanismGases;
@@ -36,7 +33,6 @@ import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.config.ConfigInfo;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.component.config.slot.ChemicalSlotInfo;
-import mekanism.common.tile.component.config.slot.EnergySlotInfo;
 import mekanism.common.tile.component.config.slot.FluidSlotInfo;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import mekanism.common.util.CableUtils;
@@ -49,7 +45,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
@@ -194,13 +189,15 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
 
     private  class FluidTank extends VariableCapacityFluidTank{
         protected FluidTank(@Nullable IContentsListener listener){
-            super(CompactMekanismMachinesConfig.machines.turbinefluidcapacity, ConstantPredicates.alwaysTrueBi(),ConstantPredicates.notExternal(),
+            super(CompactMekanismMachinesConfig.machines.turbinefluidcapacity,
+                    (stack, automationType) -> true,
+                    (stack, automationType) -> automationType != AutomationType.EXTERNAL,
                     fluid -> MekanismTags.Fluids.WATER_LOOKUP.contains(fluid.getFluid()),null);
         }
     }
 
     public long getSteamCapacity() {
-        return lowerVolume * MekanismGeneratorsConfig.generators.turbineGasPerTank.get();
+        return lowerVolume * 64000L;
     }
 
     @ComputerMethod(nameOverride = "setDumpingMode")
