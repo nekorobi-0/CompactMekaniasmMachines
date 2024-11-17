@@ -1,0 +1,16 @@
+{
+  "values": [
+    "compactmekanismmachines:compact_fission_reactor",
+    "compactmekanismmachines:compact_industrial_turbine",
+    "compactmekanismmachines:compressed_wind_generator_x2",
+    "compactmekanismmachines:compressed_wind_generator_x8",
+    "compactmekanismmachines:compressed_wind_generator_x32",
+    "compactmekanismmachines:compressed_wind_generator_x128",
+    "compactmekanismmachines:compressed_wind_generator_x512",
+    "compactmekanismmachines:compressed_wind_generator_x2048",
+    "compactmekanismmachines:compressed_wind_generator_x8192",
+    "compactmekanismmachines:compressed_wind_generator_x32768",
+    "compactmekanismmachines:compressed_wind_generator_x131072",
+    "compactmekanismmachines:compressed_wind_generator_x532480"
+  ]
+}
