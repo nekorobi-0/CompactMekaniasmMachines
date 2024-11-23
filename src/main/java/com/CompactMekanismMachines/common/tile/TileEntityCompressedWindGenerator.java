@@ -41,13 +41,13 @@ public abstract class TileEntityCompressedWindGenerator<TILE extends TileEntityC
     private double angle;
     private FloatingLong currentMultiplier = FloatingLong.ZERO;
     private boolean isBlacklistDimension;
-    protected static long multiply;
+    protected long multiply;
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerIInventorySlotWrapper.class, methodNames = "getEnergyItem")
     EnergyInventorySlot energySlot;
 
     public TileEntityCompressedWindGenerator(BlockPos pos, BlockState state, Long multiply_,BlockRegistryObject<BlockTile.BlockTileModel<TILE, Generator<TILE>>, ItemBlockWindGenerator> block) {
         super(block, pos, state, MekanismGeneratorsConfig.generators.windGenerationMax.get().multiply(multiply_));
-        multiply = multiply_;
+        this.multiply = multiply_;
     }
 
     @NotNull
@@ -166,7 +166,7 @@ public abstract class TileEntityCompressedWindGenerator<TILE extends TileEntityC
         return getActive() ? MekanismGeneratorsConfig.generators.windGenerationMin.get().multiply(getCurrentMultiplier()) : FloatingLong.ZERO;
     }
     //End methods IComputerTile
-    public static long getMultiply(){
-        return multiply;
+    public long getMultiply(){
+        return this.multiply;
     }
 }
