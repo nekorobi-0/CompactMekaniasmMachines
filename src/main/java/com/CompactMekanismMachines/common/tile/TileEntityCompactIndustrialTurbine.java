@@ -33,6 +33,7 @@ import mekanism.common.tile.component.TileComponentEjector;
 import mekanism.common.tile.component.config.ConfigInfo;
 import mekanism.common.tile.component.config.DataType;
 import mekanism.common.tile.component.config.slot.ChemicalSlotInfo;
+import mekanism.common.tile.component.config.slot.EnergySlotInfo;
 import mekanism.common.tile.component.config.slot.FluidSlotInfo;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import mekanism.common.util.CableUtils;
@@ -50,6 +51,8 @@ import org.jetbrains.annotations.Nullable;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
 
+import javax.xml.crypto.Data;
+import java.io.ObjectInputFilter;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -89,8 +92,13 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
             fluidConfig.addSlotInfo(DataType.OUTPUT,new FluidSlotInfo(false,true,ventTank));
             fluidConfig.setDataType(DataType.OUTPUT,RelativeSide.TOP);
         }
+        ConfigInfo energyConfig = configComponent.getConfig(TransmissionType.ENERGY);
+        if (energyConfig!=null){
+            energyConfig.addSlotInfo(DataType.OUTPUT,new EnergySlotInfo(false,true,energyContainer));
+            energyConfig.setDataType(DataType.OUTPUT,RelativeSide.BOTTOM);
+        }
         ejectorComponent = new TileComponentEjector(this, ()->Long.MAX_VALUE,()->Integer.MAX_VALUE,()-> FloatingLong.create(Long.MAX_VALUE));
-        ejectorComponent.setOutputData(configComponent, TransmissionType.GAS,TransmissionType.FLUID)
+        ejectorComponent.setOutputData(configComponent, TransmissionType.GAS,TransmissionType.FLUID,TransmissionType.ENERGY)
                 .setCanEject(type -> MekanismUtils.canFunction(this));
     }
 
