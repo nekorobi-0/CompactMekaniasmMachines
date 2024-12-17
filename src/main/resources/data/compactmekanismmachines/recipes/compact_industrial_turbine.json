@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "dbe",
+    "fcf",
+    "aga"
+  ],
+  "key": {
+    "a": {
+      "item": "mekanismgenerators:turbine_casing"
+    },
+    "b": {
+      "item": "mekanismgenerators:electromagnetic_coil"
+    },
+    "c":{
+      "item": "mekanismgenerators:turbine_rotor"
+    },
+    "d": {
+      "item": "mekanismgenerators:turbine_vent"
+    },
+    "e": {
+      "item": "mekanismgenerators:saturating_condenser"
+    },
+    "f": {
+      "item": "mekanismgenerators:turbine_blade"
+    },
+    "g":{
+      "item": "mekanismgenerators:rotational_complex"
+    }
+  },
+  "result": {
+    "item": "compactmekanismmachines:compact_industrial_turbine"
+  }
+}

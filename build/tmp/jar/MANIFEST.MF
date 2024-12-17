@@ -3,7 +3,7 @@ Specification-Title: compactmekanismmachines
 Specification-Vendor: nekorobi_0
 Specification-Version: 1
 Implementation-Title: CompactMekniasmMachines
-Implementation-Version: 0.1.4
+Implementation-Version: 0.1.5
 Implementation-Vendor: nekorobi_0
-Implementation-Timestamp: 2024-11-24T12:44:55+0900
+Implementation-Timestamp: 2024-12-17T22:08:12+0900
 
