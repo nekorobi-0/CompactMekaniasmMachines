@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CompactMekaniasmMachines.main.iml" filepath="$PROJECT_DIR$/.idea/modules/CompactMekaniasmMachines.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/CompactMekaniasmMachines.test.iml" filepath="$PROJECT_DIR$/.idea/modules/CompactMekaniasmMachines.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/compressed_machine.main.iml" filepath="$PROJECT_DIR$/.idea/modules/compressed_machine.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/compressed_machine.test.iml" filepath="$PROJECT_DIR$/.idea/modules/compressed_machine.test.iml" />
     </modules>
   </component>
 </project>

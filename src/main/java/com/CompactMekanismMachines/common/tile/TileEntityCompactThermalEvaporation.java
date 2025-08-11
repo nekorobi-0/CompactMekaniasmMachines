@@ -93,10 +93,18 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
         ejectorComponent = new TileComponentEjector(this,()->Long.MAX_VALUE,()->Integer.MAX_VALUE,()-> FloatingLong.create(Long.MAX_VALUE));
         ejectorComponent.setOutputData(configComponent,TransmissionType.FLUID).setCanEject(type -> MekanismUtils.canFunction(this));
     }
+
+    //これが原因に近い気がする...
     @NotNull
     @Override
     public  IFluidTankHolder getInitialFluidTanks(IContentsListener listener){
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this::getDirection,this::getConfig);
+
+        //出力してみよう
+        //System.out.println(this.getConfig().toString());
+        System.out.println(builder);
+
+
         builder.addTank(inputTank = new FluidTank(() -> 1800000, ConstantPredicates.internalOnly(), ConstantPredicates.alwaysTrueBi(), this::containsRecipe, createSaveAndComparator()));
         builder.addTank(outputTank = new FluidTank(() -> 1800000, ConstantPredicates.alwaysTrueBi(), ConstantPredicates.internalOnly(), (fluidStack -> true), this));
         return builder.build();
