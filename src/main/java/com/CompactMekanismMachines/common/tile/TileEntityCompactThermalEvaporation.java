@@ -1,7 +1,6 @@
 package com.CompactMekanismMachines.common.tile;
 
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
-import com.CompactMekanismMachines.common.config.MachinesConfig;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
@@ -36,7 +35,6 @@ import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
 import mekanism.common.recipe.MekanismRecipeType;
-import mekanism.common.recipe.ingredient.creator.FluidStackIngredientCreator;
 import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache;
 import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
