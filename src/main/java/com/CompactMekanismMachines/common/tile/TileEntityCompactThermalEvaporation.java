@@ -36,6 +36,7 @@ import mekanism.common.inventory.slot.OutputInventorySlot;
 import mekanism.common.lib.transmitter.TransmissionType;
 import mekanism.common.recipe.IMekanismRecipeTypeProvider;
 import mekanism.common.recipe.MekanismRecipeType;
+import mekanism.common.recipe.ingredient.creator.FluidStackIngredientCreator;
 import mekanism.common.recipe.lookup.ISingleRecipeLookupHandler;
 import mekanism.common.recipe.lookup.cache.InputRecipeCache;
 import mekanism.common.recipe.lookup.monitor.RecipeCacheLookupMonitor;
@@ -71,6 +72,9 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
 
     public TileEntityCompactThermalEvaporation(BlockPos pos, BlockState state){
         super(CompactBlocks.COMPACT_THERMAL_EVAPORATION, pos, state);
+
+        System.out.println("run [TileEntityCompactThermalEvaporation]");
+
         recipeCacheLookupMonitor = new RecipeCacheLookupMonitor<>(this);
         inputHandler = InputHelper.getInputHandler(inputTank, CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
@@ -94,16 +98,12 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
         ejectorComponent.setOutputData(configComponent,TransmissionType.FLUID).setCanEject(type -> MekanismUtils.canFunction(this));
     }
 
-    //これが原因に近い気がする...
     @NotNull
     @Override
     public  IFluidTankHolder getInitialFluidTanks(IContentsListener listener){
+        System.out.println("run [getInitialFluidTanks]");
+
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this::getDirection,this::getConfig);
-
-        //出力してみよう
-        //System.out.println(this.getConfig().toString());
-        System.out.println(builder);
-
 
         builder.addTank(inputTank = new FluidTank(() -> 1800000, ConstantPredicates.internalOnly(), ConstantPredicates.alwaysTrueBi(), this::containsRecipe, createSaveAndComparator()));
         builder.addTank(outputTank = new FluidTank(() -> 1800000, ConstantPredicates.alwaysTrueBi(), ConstantPredicates.internalOnly(), (fluidStack -> true), this));
@@ -124,7 +124,7 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
                             BiPredicate<FluidStack, AutomationType> canExtract,
                             BiPredicate<FluidStack, AutomationType> canInsert,
                             Predicate<FluidStack> validator,
-                            @Nullable mekanism. api. IContentsListener listener){
+                            @Nullable mekanism.api.IContentsListener listener){
             super(capacity,canExtract,canInsert,validator,listener);
         }
     }
@@ -135,12 +135,7 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
             CachedRecipe.OperationTracker.RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
     protected IContentsListener createSaveAndComparator() {
-        return () -> {
-            recipeCacheLookupMonitor.onContentsChanged();
-            if (!isRemote()) {
-                markDirtyComparator();
-            }
-        };
+        return () -> recipeCacheLookupMonitor.onContentsChanged();
     }
     @ContainerSync
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerFluidTankWrapper.class, methodNames = {"getInput", "getInputCapacity", "getInputNeeded", "getInputFilledPercentage"}, docPlaceholder = "input tank")
