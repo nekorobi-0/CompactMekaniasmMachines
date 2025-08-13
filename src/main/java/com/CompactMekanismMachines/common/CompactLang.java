@@ -1,7 +1,6 @@
 package com.CompactMekanismMachines.common;
 
 import mekanism.api.text.ILangEntry;
-import mekanism.generators.common.MekanismGenerators;
 import net.minecraft.Util;
 
 public enum CompactLang implements ILangEntry {

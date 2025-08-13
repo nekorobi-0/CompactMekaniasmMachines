@@ -1,22 +1,21 @@
 package com.CompactMekanismMachines.common.registries;
 
 import com.CompactMekanismMachines.common.CompactLang;
+import com.CompactMekanismMachines.common.CompactMekanismMachines;
 import mekanism.common.registration.impl.CreativeTabDeferredRegister;
 import mekanism.common.registration.impl.CreativeTabRegistryObject;
 import mekanism.common.registries.MekanismCreativeTabs;
-import mekanism.generators.common.MekanismGenerators;
-import mekanism.generators.common.registries.GeneratorsBlocks;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 
 public class CompactCreativeTabs {
-    public static final CreativeTabDeferredRegister CREATIVE_TABS = new CreativeTabDeferredRegister(MekanismGenerators.MODID);//, CompactCreativeTabs::addToExistingTabs);
+    public static final CreativeTabDeferredRegister CREATIVE_TABS = new CreativeTabDeferredRegister(CompactMekanismMachines.MODID, CompactCreativeTabs::addToExistingTabs);
 
     public static final CreativeTabRegistryObject GENERATORS = CREATIVE_TABS.registerMain(CompactLang.COMPACTMEKANISMMACHINES, CompactBlocks.COMPACT_FISSION_REACTOR, builder -> {
         System.out.println("init cmm creative tab.");
-        return  builder.withSearchBar(50)//Allow our tabs to be searchable for convenience purposes
+        return  builder.withSearchBar(13)//Allow our tabs to be searchable for convenience purposes
                         .withTabsBefore(MekanismCreativeTabs.MEKANISM.key())
                         .displayItems((displayParameters, output) -> {
                             CreativeTabDeferredRegister.addToDisplay(CompactBlocks.BLOCKS, output);
