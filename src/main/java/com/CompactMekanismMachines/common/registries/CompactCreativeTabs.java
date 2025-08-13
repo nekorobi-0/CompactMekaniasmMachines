@@ -12,16 +12,16 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 
 public class CompactCreativeTabs {
-    public static final CreativeTabDeferredRegister CREATIVE_TABS = new CreativeTabDeferredRegister(MekanismGenerators.MODID, CompactCreativeTabs::addToExistingTabs);
+    public static final CreativeTabDeferredRegister CREATIVE_TABS = new CreativeTabDeferredRegister(MekanismGenerators.MODID);//, CompactCreativeTabs::addToExistingTabs);
 
-    public static final CreativeTabRegistryObject GENERATORS = CREATIVE_TABS.registerMain(CompactLang.COMPACTMEKANISMMACHINES, CompactBlocks.COMPACT_FISSION_REACTOR, builder ->
-            builder.withBackgroundLocation(MekanismGenerators.rl("textures/gui/creative_tab.png"))
-                    .withSearchBar(50)//Allow our tabs to be searchable for convenience purposes
-                    .withTabsBefore(MekanismCreativeTabs.MEKANISM.key())
-                    .displayItems((displayParameters, output) -> {
-                        CreativeTabDeferredRegister.addToDisplay(CompactBlocks.BLOCKS, output);
-                    })
-    );
+    public static final CreativeTabRegistryObject GENERATORS = CREATIVE_TABS.registerMain(CompactLang.COMPACTMEKANISMMACHINES, CompactBlocks.COMPACT_FISSION_REACTOR, builder -> {
+        System.out.println("init cmm creative tab.");
+        return  builder.withSearchBar(50)//Allow our tabs to be searchable for convenience purposes
+                        .withTabsBefore(MekanismCreativeTabs.MEKANISM.key())
+                        .displayItems((displayParameters, output) -> {
+                            CreativeTabDeferredRegister.addToDisplay(CompactBlocks.BLOCKS, output);
+                        });
+    });
 
     private static void addToExistingTabs(BuildCreativeModeTabContentsEvent event) {
         ResourceKey<CreativeModeTab> tabKey = event.getTabKey();
