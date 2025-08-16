@@ -1,7 +1,6 @@
 package com.CompactMekanismMachines.common.tile;
 
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
-import com.CompactMekanismMachines.common.config.MachinesConfig;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
 import mekanism.api.AutomationType;
 import mekanism.api.IContentsListener;
@@ -71,6 +70,9 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
 
     public TileEntityCompactThermalEvaporation(BlockPos pos, BlockState state){
         super(CompactBlocks.COMPACT_THERMAL_EVAPORATION, pos, state);
+
+        System.out.println("run [TileEntityCompactThermalEvaporation]");
+
         recipeCacheLookupMonitor = new RecipeCacheLookupMonitor<>(this);
         inputHandler = InputHelper.getInputHandler(inputTank, CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_INPUT);
         outputHandler = OutputHelper.getOutputHandler(outputTank, CachedRecipe.OperationTracker.RecipeError.NOT_ENOUGH_OUTPUT_SPACE);
@@ -93,10 +95,14 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
         ejectorComponent = new TileComponentEjector(this,()->Long.MAX_VALUE,()->Integer.MAX_VALUE,()-> FloatingLong.create(Long.MAX_VALUE));
         ejectorComponent.setOutputData(configComponent,TransmissionType.FLUID).setCanEject(type -> MekanismUtils.canFunction(this));
     }
+
     @NotNull
     @Override
     public  IFluidTankHolder getInitialFluidTanks(IContentsListener listener){
+        System.out.println("run [getInitialFluidTanks]");
+
         FluidTankHelper builder = FluidTankHelper.forSideWithConfig(this::getDirection,this::getConfig);
+
         builder.addTank(inputTank = new FluidTank(() -> 1800000, ConstantPredicates.internalOnly(), ConstantPredicates.alwaysTrueBi(), this::containsRecipe, createSaveAndComparator()));
         builder.addTank(outputTank = new FluidTank(() -> 1800000, ConstantPredicates.alwaysTrueBi(), ConstantPredicates.internalOnly(), (fluidStack -> true), this));
         return builder.build();
@@ -116,7 +122,7 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
                             BiPredicate<FluidStack, AutomationType> canExtract,
                             BiPredicate<FluidStack, AutomationType> canInsert,
                             Predicate<FluidStack> validator,
-                            @Nullable mekanism. api. IContentsListener listener){
+                            @Nullable mekanism.api.IContentsListener listener){
             super(capacity,canExtract,canInsert,validator,listener);
         }
     }
@@ -127,12 +133,7 @@ public class TileEntityCompactThermalEvaporation extends TileEntityConfigurableM
             CachedRecipe.OperationTracker.RecipeError.INPUT_DOESNT_PRODUCE_OUTPUT
     );
     protected IContentsListener createSaveAndComparator() {
-        return () -> {
-            recipeCacheLookupMonitor.onContentsChanged();
-            if (!isRemote()) {
-                markDirtyComparator();
-            }
-        };
+        return () -> recipeCacheLookupMonitor.onContentsChanged();
     }
     @ContainerSync
     @WrappingComputerMethod(wrapper = SpecialComputerMethodWrapper.ComputerFluidTankWrapper.class, methodNames = {"getInput", "getInputCapacity", "getInputNeeded", "getInputFilledPercentage"}, docPlaceholder = "input tank")
