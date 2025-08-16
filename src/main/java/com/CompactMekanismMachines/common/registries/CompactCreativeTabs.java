@@ -15,8 +15,7 @@ public class CompactCreativeTabs {
 
     public static final CreativeTabRegistryObject GENERATORS = CREATIVE_TABS.registerMain(CompactLang.COMPACTMEKANISMMACHINES, CompactBlocks.COMPACT_FISSION_REACTOR, builder -> {
         System.out.println("init cmm creative tab.");
-        return  builder.withBackgroundLocation(CompactMekanismMachines.rl("textures/gui/creative_tab.png"))
-                .withSearchBar(25)//Allow our tabs to be searchable for convenience purposes
+        return  builder.withSearchBar(25)//Allow our tabs to be searchable for convenience purposes
                         .withTabsBefore(MekanismCreativeTabs.MEKANISM.key())
                         .displayItems((displayParameters, output) -> {
                             CreativeTabDeferredRegister.addToDisplay(CompactBlocks.BLOCKS, output);
