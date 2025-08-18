@@ -2,6 +2,7 @@
   "values": [
     "compactmekanismmachines:compact_fission_reactor",
     "compactmekanismmachines:compact_industrial_turbine",
+    "compactmekanismmachines:compact_thermal_evaporation",
     "compactmekanismmachines:compressed_wind_generator_x2",
     "compactmekanismmachines:compressed_wind_generator_x8",
     "compactmekanismmachines:compressed_wind_generator_x32",
