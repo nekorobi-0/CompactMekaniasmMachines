@@ -2,7 +2,6 @@ package com.CompactMekanismMachines.common.config;
 
 import mekanism.common.config.BaseMekanismConfig;
 import mekanism.common.config.value.*;
-import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 

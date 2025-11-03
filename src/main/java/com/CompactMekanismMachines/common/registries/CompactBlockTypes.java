@@ -16,7 +16,6 @@ import mekanism.common.content.blocktype.Machine;
 import mekanism.generators.common.GeneratorsLang;
 import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.blocktype.Generator;
-import mekanism.generators.common.registries.GeneratorsContainerTypes;
 import mekanism.generators.common.registries.GeneratorsSounds;
 
 import java.util.EnumSet;
