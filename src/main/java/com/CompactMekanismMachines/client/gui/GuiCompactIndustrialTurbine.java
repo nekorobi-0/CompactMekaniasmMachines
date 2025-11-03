@@ -83,8 +83,7 @@ public class GuiCompactIndustrialTurbine extends GuiConfigurableTile<TileEntityC
             EnergyDisplay storing;
             EnergyDisplay producing;
             storing = EnergyDisplay.of(tile.energyContainer);
-            producing = EnergyDisplay.of(MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                    .multiply(tile.clientFlow * CompactMekanismMachinesConfig.machines.turbinevertualblades.get()));
+            producing = EnergyDisplay.of(tile.getProductionRate());
             return List.of(MekanismLang.STORING.translate(storing), GeneratorsLang.PRODUCING_AMOUNT.translate(producing));
         }));
         addRenderableWidget(new GuiGasMode(this, 159, 72, true, () -> tile.dumpMode, tile.getBlockPos(), 0, this::dumpModeTooltip));
