@@ -37,13 +37,11 @@ import mekanism.common.tile.component.config.slot.ChemicalSlotInfo;
 import mekanism.common.tile.component.config.slot.EnergySlotInfo;
 import mekanism.common.tile.component.config.slot.FluidSlotInfo;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
-import mekanism.common.util.CableUtils;
 import mekanism.common.util.MekanismUtils;
 
 import mekanism.generators.common.config.MekanismGeneratorsConfig;
 import mekanism.generators.common.content.turbine.TurbineValidator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
@@ -52,9 +50,6 @@ import org.jetbrains.annotations.Nullable;
 import com.CompactMekanismMachines.common.registries.CompactBlocks;
 import com.CompactMekanismMachines.common.config.CompactMekanismMachinesConfig;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMachine {
 
     /**
@@ -62,14 +57,15 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
      */
     public GasTank gasTank;
     public FluidTank ventTank;
+    @ContainerSync
     public BasicEnergyContainer energyContainer;
-    private FloatingLong maxoutput = FloatingLong.create(Long.MAX_VALUE);
 
     public Integer lowerVolume = CompactMekanismMachinesConfig.machines.turbinevertuallowervolume.get();
 
     @SyntheticComputerMethod(getter = "getDumpingMode")
     public TileEntityChemicalTank.GasMode dumpMode = TileEntityChemicalTank.GasMode.IDLE;
 
+    @ContainerSync
     @SyntheticComputerMethod(getter = "getLastSteamInputRate")
     public long lastSteamInput;
     public long newSteamInput;
@@ -130,55 +126,51 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
 
     @Override
     protected void onUpdateServer() {
-        super.onUpdateServer();
         lastSteamInput = newSteamInput;
         newSteamInput = 0;
+
         long stored = gasTank.getStored();
-        double flowRate = 0;
-        if (!gasTank.isEmpty() && MekanismUtils.canFunction(this)) {
-            setActive(true);
-            Set<Direction> emitDirections = EnumSet.noneOf(Direction.class);
-            Direction direction = getDirection();
-            for (RelativeSide energySide : getEnergySides()) {
-                emitDirections.add(energySide.getDirection(direction));
-            }
-            CableUtils.emit(emitDirections, energyContainer, this, maxoutput);
-            FloatingLong energyNeeded = energyContainer.getNeeded();
-            if (stored > 0 && !energyNeeded.isZero()) {
-                FloatingLong energyMultiplier = FloatingLong.create(CompactMekanismMachinesConfig.machines.turbineenergymultiply.getAsDouble());
-                if (energyMultiplier.isZero()) {
-                    clientFlow = 0;
-                } else {
-                    double rate = lowerVolume * (CompactMekanismMachinesConfig.machines.turbinevertualdispersers.get() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
-                    rate = Math.min(rate, CompactMekanismMachinesConfig.machines.turbinevertualvents.get() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
-                    double proportion = stored / (double) getSteamCapacity();
-                    rate = Math.min(Math.min(stored, rate), energyNeeded.divide(energyMultiplier).doubleValue()) * proportion*100000;
-                    clientFlow = MathUtils.clampToLong(rate);
-                    if (clientFlow > 0) {
-                        energyContainer.insert(energyMultiplier.multiply(rate), Action.EXECUTE, AutomationType.INTERNAL);
-                        gasTank.shrinkStack(clientFlow, Action.EXECUTE);
-                        ventTank.setStack(new FluidStack(Fluids.WATER, Math.min(MathUtils.clampToInt(rate), CompactMekanismMachinesConfig.machines.turbinevertualcondensors.get()* MekanismGeneratorsConfig.generators.condenserRate.get())));
-                    }
-                }
-            } else {
+
+        FloatingLong energyNeeded = energyContainer.getNeeded();
+        if (stored > 0 && !energyNeeded.isZero() && MekanismUtils.canFunction(this)) {
+            FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
+                    .multiply(Math.min(TurbineValidator.MAX_BLADES,CompactMekanismMachinesConfig.machines.turbinevertualblades.get()));
+            if (energyMultiplier.isZero()) {
                 clientFlow = 0;
-            }
-
-            if (dumpMode != TileEntityChemicalTank.GasMode.IDLE && !gasTank.isEmpty()) {
-                long amount = gasTank.getStored();
-                if (dumpMode == TileEntityChemicalTank.GasMode.DUMPING) {
-                    gasTank.shrinkStack(getDumpingAmount(amount), Action.EXECUTE);
-                } else {//DUMPING_EXCESS
-                    //Don't allow dumping more than the configured amount
-                    long targetLevel = MathUtils.clampToLong(gasTank.getCapacity() * MekanismConfig.general.dumpExcessKeepRatio.get());
-                    if (targetLevel < amount) {
-                        gasTank.shrinkStack(Math.min(amount - targetLevel, getDumpingAmount(amount)), Action.EXECUTE);
-                    }
+            } else {
+                setActive(true);
+                double rate = lowerVolume * (CompactMekanismMachinesConfig.machines.turbinevertualdispersers.get() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
+                rate = Math.min(rate, CompactMekanismMachinesConfig.machines.turbinevertualvents.get() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
+                double proportion = stored / (double) getSteamCapacity();
+                rate = Math.min(Math.min(stored, rate), energyNeeded.divide(energyMultiplier).doubleValue()) * proportion;
+                clientFlow = MathUtils.clampToLong(rate);
+                if (clientFlow > 0) {
+                    energyContainer.insert(energyMultiplier.multiply(rate), Action.EXECUTE, AutomationType.INTERNAL);
+                    gasTank.shrinkStack(clientFlow, Action.EXECUTE);
+                    ventTank.setStack(new FluidStack(Fluids.WATER, Math.min(MathUtils.clampToInt(rate), CompactMekanismMachinesConfig.machines.turbinevertualcondensors.get()* MekanismGeneratorsConfig.generators.condenserRate.get())));
                 }
             }
-
+        } else {
+            clientFlow = 0;
+            setActive(false);
         }
 
+        newSteamInput = clientFlow;
+
+        if (dumpMode != TileEntityChemicalTank.GasMode.IDLE && !gasTank.isEmpty()) {
+            long amount = gasTank.getStored();
+            if (dumpMode == TileEntityChemicalTank.GasMode.DUMPING) {
+                gasTank.shrinkStack(getDumpingAmount(amount), Action.EXECUTE);
+            } else {//DUMPING_EXCESS
+                //Don't allow dumping more than the configured amount
+                long targetLevel = MathUtils.clampToLong(gasTank.getCapacity() * MekanismConfig.general.dumpExcessKeepRatio.get());
+                if (targetLevel < amount) {
+                    gasTank.shrinkStack(Math.min(amount - targetLevel, getDumpingAmount(amount)), Action.EXECUTE);
+                }
+            }
+        }
+
+        super.onUpdateServer();
     }
 
     //Methods relating to IComputerTile
@@ -202,7 +194,7 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
     }
 
     public long getSteamCapacity() {
-        return lowerVolume * MekanismGeneratorsConfig.generators.turbineGasPerTank.get();
+        return CompactMekanismMachinesConfig.machines.turbinegascapacity.getAsLong();
     }
 
     @ComputerMethod(nameOverride = "setDumpingMode")
@@ -236,16 +228,16 @@ public class TileEntityCompactIndustrialTurbine extends TileEntityConfigurableMa
     @ComputerMethod
     public FloatingLong getMaxProduction() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                .multiply(CompactMekanismMachinesConfig.machines.turbinevertualblades.get());
+                .multiply(Math.min(TurbineValidator.MAX_BLADES,CompactMekanismMachinesConfig.machines.turbinevertualblades.get()));
         double rate = lowerVolume * (CompactMekanismMachinesConfig.machines.turbinevertualdispersers.get() * MekanismGeneratorsConfig.generators.turbineDisperserGasFlow.get());
         rate = Math.min(rate, CompactMekanismMachinesConfig.machines.turbinevertualvents.get() * MekanismGeneratorsConfig.generators.turbineVentGasFlow.get());
-        return energyMultiplier.multiply(rate);
+        return energyMultiplier.multiply(rate * 2);
     }
 
     @ComputerMethod
     public FloatingLong getProductionRate() {
         FloatingLong energyMultiplier = MekanismConfig.general.maxEnergyPerSteam.get().divide(TurbineValidator.MAX_BLADES)
-                .multiply(CompactMekanismMachinesConfig.machines.turbinevertualblades.get());
+                .multiply(Math.min(TurbineValidator.MAX_BLADES,CompactMekanismMachinesConfig.machines.turbinevertualblades.get()));
         return energyMultiplier.multiply(clientFlow);
     }
 
