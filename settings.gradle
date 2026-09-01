@@ -11,3 +11,9 @@ pluginManagement {
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
 }
+
+includeBuild('../Mekanism/annotation-processor') {
+    dependencySubstitution {
+        substitute module('mekanism.annotation-processor:annotation-processor') using project(':')
+    }
+}
