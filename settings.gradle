@@ -12,8 +12,11 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
 }
 
-includeBuild('../Mekanism/annotation-processor') {
-    dependencySubstitution {
-        substitute module('mekanism.annotation-processor:annotation-processor') using project(':')
+def mekanismApDir = file('../Mekanism/annotation-processor')
+if (mekanismApDir.exists()) {
+    includeBuild(mekanismApDir.path) {
+        dependencySubstitution {
+            substitute module('mekanism.annotation-processor:annotation-processor') using project(':')
+        }
     }
 }
